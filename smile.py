@@ -7,6 +7,7 @@ import numpy as np
 import time
 import dlib
 import cv2
+import datetime
 
 
 def smile(mouth):
@@ -22,7 +23,12 @@ def smile(mouth):
 COUNTER = 0
 TOTAL = 0
 
-SMILE_THRESHOLD = 0.30
+
+def get_unique_timestamp():
+    _now = datetime.datetime.now()
+    return _now.strftime("%Y-%m-%d-%H-%M-%S")
+
+SMILE_THRESHOLD = 0.40
 
 
 def click():
@@ -38,6 +44,8 @@ predictor = dlib.shape_predictor(shape_predictor)
 
 print("[INFO] starting video stream thread...")
 
+# 640, 480 can be tried too.
+# , resolution=(800, 600)
 vs = VideoStream(src=0).start()
 fileStream = False
 
@@ -45,12 +53,14 @@ time.sleep(1.0)
 
 fps = FPS().start()
 
-cv2.namedWindow("smile detector.")
+window_name = "Smile Camera"
+
+cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
 
 while True:
     frame = vs.read()
 
-    frame = imutils.resize(frame, width=450)
+    #frame = imutils.resize(frame, width=800)
 
     grayscale_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -77,7 +87,7 @@ while True:
             COUNTER += 1
 
         else:
-            if COUNTER >= 5:
+            if COUNTER >= 3:
                 TOTAL += 1
                 time.sleep(0.2)
                 click()
@@ -88,21 +98,20 @@ while True:
 
                 frame2 = frame.copy()
 
-                img_name = "smile_photo_{}.png".format(TOTAL)
+                img_name = "smile_photo_{total}_{ts}.png".format(total=TOTAL, ts=get_unique_timestamp())
 
                 cv2.imwrite(img_name, frame2)
                 print("{} written!".format(img_name))
 
             else:
                 if COUNTER < 3:
-                    cv2.putText(frame, "Smile!", (10, 30), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 0, 255), 2)
+                    cv2.putText(frame, "Smile wide!", (10, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
                 else:
-                    cv2.putText(frame, "Smile Wider!", (10, 30), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 0), 2)
-
+                    cv2.putText(frame, "Smile Wider!", (10, 30), cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
 
             COUNTER = 0
 
-    cv2.imshow("Smile Camera", frame)
+    cv2.imshow(window_name, frame)
 
     fps.update()
 
