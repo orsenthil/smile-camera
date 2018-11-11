@@ -1,3 +1,4 @@
+import subprocess
 from scipy.spatial import distance as dist
 from imutils.video import VideoStream, FPS
 from imutils import face_utils
@@ -22,6 +23,11 @@ COUNTER = 0
 TOTAL = 0
 
 SMILE_THRESHOLD = 0.30
+
+
+def click():
+    subprocess.call(["afplay", "/Users/senthil/facedetect/click.wav"])
+
 
 shape_predictor = "shape_predictor_68_face_landmarks.dat"
 
@@ -71,9 +77,11 @@ while True:
             COUNTER += 1
 
         else:
-            if COUNTER >= 10:
+            if COUNTER >= 5:
                 TOTAL += 1
                 time.sleep(0.2)
+                click()
+
                 cv2.putText(frame, "Click!", (10, 30), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
 
                 frame = vs.read()
