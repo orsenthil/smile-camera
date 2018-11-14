@@ -16,6 +16,8 @@ def smile(mouth):
     C = dist.euclidean(mouth[4], mouth[8])
     avg = (A+B+C)/3
     D = dist.euclidean(mouth[0], mouth[6])
+    # mouth aspect ratio
+    # this is our measure of smile
     mar = avg / D
     return mar
 
@@ -28,7 +30,8 @@ def get_unique_timestamp():
     _now = datetime.datetime.now()
     return _now.strftime("%Y-%m-%d-%H-%M-%S")
 
-SMILE_THRESHOLD = 0.40
+
+SMILE_THRESHOLD = 0.20
 
 
 def click():
@@ -78,7 +81,7 @@ while True:
         face_smile_values[idx] = mar
         mouthHull = cv2.convexHull(mouth)
 
-        cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
+        #cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
 
         sum_of_smiles = sum(face_smile_values.values())
         total_smile_threshold = SMILE_THRESHOLD * num_faces
@@ -104,7 +107,7 @@ while True:
                 print("{} written!".format(img_name))
 
             else:
-                if COUNTER < 3:
+                if COUNTER < 5:
                     cv2.putText(frame, "Smile wide!", (10, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
                 else:
                     cv2.putText(frame, "Smile Wider!", (10, 30), cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
