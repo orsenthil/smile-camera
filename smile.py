@@ -29,7 +29,7 @@ def get_unique_timestamp():
     return _now.strftime("%Y-%m-%d-%H-%M-%S")
 
 
-SMILE_THRESHOLD = 0.30
+SMILE_THRESHOLD = 0.50
 
 
 def click():
@@ -101,6 +101,7 @@ while True:
             img_name = "smile_photo_{total}_{ts}.png".format(total=TOTAL, ts=get_unique_timestamp())
 
             cv2.imwrite(img_name, frame2)
+            frame = cv2.imread("white.jpg", cv2.IMREAD_COLOR)
             print("{} written!".format(img_name))
             COUNTER = 0
 
